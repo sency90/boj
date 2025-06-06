@@ -5,34 +5,38 @@ using namespace std;
 typedef long long ll;
 vector<int> v[300001];
 bool chk[300001];
+ll tree_cnt[300001];
+ll tree_hsum[300001];
+ll g[300001];
+int g_N;
 
 int n;
 ll sum;
-ll dfs(int x, int hh) {
+void dfs(int x, ll hh) {
 	chk[x] = true;
-	//ll sub[2] = {0,0};
-	vector<int> sub;
-	int k=0;
+	tree_cnt[x] = 1;
+	tree_hsum[x] += hh;
+	ll cnt = 0;
+	vector<int> g;
 	for(int i=0; i<v[x].size(); i++) {
 		int y = v[x][i];
 		if(chk[y]) continue;
-		sub.push_back(dfs(y, hh+1));
+		dfs(y, hh+1);
+		tree_cnt[x] += tree_cnt[y];
+		tree_hsum[x] += tree_hsum[y];
+		g.push_back(y);
 	}
-	sum += (ll)hh*(n-1);
-	int ret = 0;
-	for(int i=0; i<sub.size(); i++) ret += sub[i];
+	//printf("[%d] cnt:%lld, husm:%lld\n", x, tree_cnt[x], tree_hsum[x]);
 
-	if(sub.size()>=2) {
-		for(int i=0; i<sub.size(); i++) {
-			for(int j=i+1; j<sub.size(); j++) {
-				sum -= hh*((ll)(sub[i]+1)*(sub[j]+1)-1);
-			}
+	for(int i=0; i<g.size(); i++) {
+		sum += tree_hsum[g[i]];
+		for(int j=i+1; j<g.size(); j++) {
+			sum += tree_cnt[g[j]]*tree_hsum[g[i]];
+			sum += tree_cnt[g[i]]*tree_hsum[g[j]];
+			sum -= hh*tree_cnt[g[i]]*tree_cnt[g[j]];
 		}
 	}
-	else if(sub.size()==1) sum -= (ll)hh*sub[0];
-	//sum -= (ll)hh*((ll)(sub[0]+1)*(sub[1]+1)-1);
-	return ret+1;
-	//return sub[0] + sub[1] + 1;
+	g.clear();
 }
 int main() {
 	scanf("%d", &n);
