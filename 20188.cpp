@@ -1,3 +1,4 @@
+//O(N^2) Solution
 #include <cstdio>
 #include <vector>
 #include <cstring>
@@ -39,6 +40,9 @@ void dfs(int x, ll hh) {
 	g.clear();
 }
 int main() {
+#ifdef _WIN32
+	freopen("C:\\Users\\User\\Documents\\boj\\in", "r", stdin);
+#endif
 	scanf("%d", &n);
 	for(int i=0; i<n-1; i++) {
 		int x,y;
