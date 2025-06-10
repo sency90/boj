@@ -1,31 +1,37 @@
-#include <stdio.h>
-#include <algorithm>
+#include <cstdio>
 using namespace std;
-int x[3], cnt, ans;
-int main() {
-    while(true) {
-        cnt=0;
-        for(int i=0; i<3; i++) {
-            scanf("%d", x+i);
-            if(x[i]==0) cnt++;
-        }
-        if(cnt==3) return 0;
-        sort(x, x+3);
-        if(x[0]==x[1]) {
-            if(x[1]==x[2]) ans=0;
-            else ans=1;
-        } else if(x[1]==x[2]) ans=1;
-        else {
-            if(x[0]+x[1] <= x[2]) ans=3;
-            else ans=2;
-        }
+int a[3];
+void judge() {
+		if(a[0]==a[1] && a[1]==a[2]) {
+			puts("Equilateral");
+			return;
+		}
+		else {
+			int sum = a[0]+a[1]+a[2];
+			for(int i=0; i<3; i++) {
+				if(sum-a[i] <= a[i]) {
+					puts("Invalid");
+					return;
+				}
+			}
+		}
 
-        switch(ans) {
-            case 0: puts("Equilateral"); break;
-            case 1: puts("Isosceles"); break;
-            case 2: puts("Scalene"); break;
-            case 3: puts("Invalid"); break;
-        }
-    }
-    return 0;
+		if(a[0]==a[1] || a[1]==a[2] || a[2]==a[0]) {
+			puts("Isosceles");
+			return;
+		}
+		else if(a[0]!=a[1] && a[1]!=a[2] && a[2]!=a[0]) {
+			puts("Scalene");
+			return;
+		}
+		puts("Invalid");
+}
+int main() {
+	while(true) {
+		scanf("%d%d%d",&a[0],&a[1],&a[2]);
+		if(a[0]==0 && a[1]==0 && a[2]==0) return 0;
+
+		judge();
+	}
+	return 0;
 }
