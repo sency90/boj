@@ -45,15 +45,11 @@ int a(const char *s, int idx) { //(100+1+ | 01)+
 		nidx = o(s, idx, 0);
 		if(nidx == NA) return NA;
 		for(int i=idx; i<nidx; i++) {
-			nidx = a(s,i+1);
-			if(nidx != NA) {
-				return nidx;
-			}
-
+			int ni = a(s,i+1);
+			if(ni != NA) return ni;
 		}
 	}
-	return NA;
-	//return a(s, res);
+	return a(s, nidx);
 }
 
 int main() {
@@ -62,8 +58,7 @@ int main() {
 		memset(s,0,sizeof(s));
 		scanf("%s", s);
 		N = strlen(s);
-		int idx=0;
-		if(a(s,idx)==N) puts("YES");
+		if(N == a(s,0)) puts("YES");
 		else puts("NO");
 	}
 	return 0;
