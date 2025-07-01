@@ -6,11 +6,9 @@ int N,M,K;
 struct Cell{
 	int sno; //shark no
 	int tm; //time
-	Cell(){}
-	Cell(int sno, int tm):sno(sno),tm(tm) {}
-	void print() const {
-		printf("(%2d,%2d) ", sno,tm);
-	}
+	bool was_empty;
+	Cell():was_empty(true){}
+	Cell(int sno, int tm, bool was_empty):sno(sno),tm(tm),was_empty(was_empty) {}
 };
 Cell v[20][20];
 int dx[] = {-1,1,0,0};
@@ -29,12 +27,12 @@ struct Shark{
 			int ny = y+dy[d];
 			if(nx<0||ny<0||nx>=N||ny>=N) continue; //out of bound
 
-			if(v[nx][ny].tm <= cur_time) { //there isn't a shark or scent of a shark.
-				v[nx][ny] = Cell(sno, cur_time+K);
+			if(v[nx][ny].tm < cur_time) { //there isn't a shark or scent of a shark.
+				v[nx][ny] = Cell(sno, cur_time+K, true);
 				go(nx,ny,d);
 				return 0;
 			} 
-			if(v[nx][ny].tm == cur_time+K) { //other shark was there just before
+			if(v[nx][ny].tm == cur_time+K && v[nx][ny].was_empty) { //other shark was there just before
 				int dead_sno = max(v[nx][ny].sno, sno);
 				v[nx][ny].sno = min(v[nx][ny].sno, sno);
 				dead_cnt++;
@@ -48,7 +46,7 @@ struct Shark{
 			int ny = y+dy[d];
 			if(nx<0||ny<0||nx>=N||ny>=N) continue; //out of bound
 			if(v[nx][ny].sno==sno) {
-				v[nx][ny] = Cell(sno, cur_time+K);
+				v[nx][ny] = Cell(sno, cur_time+K, false);
 				go(nx,ny,d);
 				return 0;
 			}
@@ -76,7 +74,7 @@ int main() {
 				s[sno].sno=sno;
 				s[sno].x=i;
 				s[sno].y=j;
-				v[i][j] = Cell(sno,cur_tm+K);
+				v[i][j] = Cell(sno,cur_tm+K,true);
 			}
 		}
 	}
@@ -96,14 +94,6 @@ int main() {
 	while(cur_tm<1000) {
 		if(M-dead_cnt==1) break;
 		cur_tm++;
-		printf("[cur_tm: %d] %d\n", cur_tm, dead_cnt);
-		for(int i=0; i<N; i++) {
-			for(int j=0; j<N; j++) {
-				v[i][j].print();
-			}
-			puts("");
-		}
-		puts("");
 
 		for(int i=1; i<=M; i++) {
 			if(s[i].sno == 0) continue;
@@ -111,15 +101,11 @@ int main() {
 			if(dead_sno) s[dead_sno].sno=0;
 		}
 
-
-		//printf("[cur_tm: %d] %d\n", cur_tm, dead_cnt);
-		//for(int i=0; i<N; i++) {
-		//	for(int j=0; j<N; j++) {
-		//		v[i][j].print();
-		//	}
-		//	puts("");
-		//}
-		//puts("");
+		for(int i=0; i<N; i++) {
+			for(int j=0; j<N; j++) {
+				v[i][j].was_empty = true;
+			}
+		}
 	}
 
 BRK:
